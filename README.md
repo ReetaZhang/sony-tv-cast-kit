@@ -17,7 +17,7 @@
 
 ## 快速开始
 
-**方式一（推荐）**：到 [Releases](../../releases/latest) 下载 `索尼电视投屏套件.zip`，解压后：
+**方式一（推荐）**：到 [Releases](../../releases/latest) 下载 `sony-tv-cast-kit.zip`（解压后是 `索尼电视投屏套件/` 文件夹），然后：
 
 1. 电视上用遥控器：**设置 → 系统 → 关于 → 版本**（连按 7 次）→ 返回 **系统 → 开发者选项** → 打开 **网络调试**；
 2. 双击 `开始使用（macOS）.command`（Windows 用 `Windows-启动.bat`），浏览器会打开安装向导；
