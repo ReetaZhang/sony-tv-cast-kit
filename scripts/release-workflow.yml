@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch and verify receiver APKs
+        run: python scripts/fetch_apks.py
+
+      - name: Build release zip
+        run: python scripts/build_release.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sony-tv-cast-kit
+          path: |
+            dist/索尼电视投屏套件.zip
+            dist/SHA256SUMS.txt
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/索尼电视投屏套件.zip
+            dist/SHA256SUMS.txt
+          body: |
+            下载 `索尼电视投屏套件.zip`，解压后双击「开始使用（macOS）.command」或「Windows-启动.bat」。
+
+            完整说明见压缩包内的 `使用说明.html`。

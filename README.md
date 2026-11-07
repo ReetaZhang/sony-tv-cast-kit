@@ -67,7 +67,10 @@ python3 scripts/build_release.py   # 产出 dist/索尼电视投屏套件.zip + 
 ```
 
 推一个 `v*` 标签（如 `git tag v1.1.0 && git push origin v1.1.0`），
-GitHub Actions 会自动构建并把 zip 挂到 Release。
+再把 `scripts/release-workflow.yml` 复制到 `.github/workflows/release.yml`，Actions 就会自动构建并把 zip 挂到 Release。
+
+> 之所以以模板形式存放：用 OAuth 令牌（非 PAT）推送时，GitHub 要求令牌额外具备 `workflow` 权限才能提交工作流文件。
+> 直接在网页上新建 `.github/workflows/release.yml` 粘贴内容，或用 `gh auth refresh -s workflow` 升级权限后推送即可。
 
 ## 目录结构
 
