@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>索尼电视投屏助手</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<svg class="sprite" aria-hidden="true">
+  <symbol id="i-tv" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2.5"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><path d="M4 12h16"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5 10-11"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10.5 18.5h3"/></symbol>
+  <symbol id="i-mac" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="12.5" rx="2"/><path d="M9.5 20h5M12 16.5V20"/></symbol>
+  <symbol id="i-android" viewBox="0 0 24 24"><path d="M6 9.5h12v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M8 9.5 6.2 5.2M16 9.5l1.8-4.3M8 6.5l-.6.9M16 6.5l.6.9"/><path d="M10 14v2.5M14 14v2.5"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="m7 9 3 3-3 3M13 15h4"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.2-2.9 7.8-7 9-4.1-1.2-7-4.8-7-9V6z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M2.5 9a15 15 0 0 1 19 0M5.5 12.5a10.5 10.5 0 0 1 13 0M8.5 16a6 6 0 0 1 7 0"/><circle cx="12" cy="19.2" r="1.2"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/></symbol>
+</svg>
+
+<div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo"><svg><use href="#i-tv"/></svg></div>
+    <div class="brand-text">
+      <h1>索尼电视投屏助手</h1>
+      <p>在索尼电视上装好接收端，iPhone / iPad / Mac 直接「屏幕镜像」</p>
+    </div>
+  </div>
+  <div class="top-right">
+    <span class="chip" id="ipChip" title="本机局域网地址"><svg class="chip-icon"><use href="#i-wifi"/></svg><i></i>--</span>
+    <span class="chip" id="adbChip" title="adb 运行状态"><b class="dot"></b>adb 检查中</span>
+  </div>
+</header>
+
+<div class="device-bar" id="deviceBar">
+  <span class="pulse"></span>
+  <span id="deviceText">尚未连接电视 · 请先完成第 1 步</span>
+  <span class="grow"></span>
+  <button class="link-btn hidden" id="refreshBtn">刷新设备</button>
+  <button class="link-btn hidden" id="disconnectBtn">断开</button>
+</div>
+
+<nav class="stepper" aria-label="步骤">
+  <button class="step active" data-step="1"><span class="num">1</span><span class="txt">连接电视</span></button>
+  <button class="step" data-step="2"><span class="num">2</span><span class="txt">安装接收端</span></button>
+  <button class="step" data-step="3"><span class="num">3</span><span class="txt">启动服务</span></button>
+  <button class="step" data-step="4"><span class="num">4</span><span class="txt">开始投屏</span></button>
+</nav>
+
+<main>
+  <!-- 步骤 1 -->
+  <section class="panel active" data-step="1">
+    <div class="grid-2">
+      <article class="card">
+        <header class="card-head">
+          <div class="icon-badge blue"><svg><use href="#i-tv"/></svg></div>
+          <div><h2>电视端操作</h2><p>用遥控器在电视上完成，只需做一次</p></div>
+        </header>
+        <ol class="steps-list">
+          <li><span class="idx">1</span><div>按遥控器 <kbd>主页</kbd>，进入 <b>设置</b> → <b>系统</b> → <b>关于</b> → <b>版本</b></div></li>
+          <li><span class="idx">2</span><div>停在「版本」上 <b>连按 7 次确定键</b>，屏幕提示「您已处于开发者模式」</div></li>
+          <li><span class="idx">3</span><div>返回 <b>系统</b> → <b>开发者选项</b>，打开 <b>网络调试</b>（部分机型显示为 USB 调试）</div></li>
+          <li><span class="idx">4</span><div>在同一页记下电视的 IP 地址，或回到 <b>网络</b> 设置里查看，例如 <code>192.168.1.68</code></div></li>
+        </ol>
+        <div class="note">
+          <svg><use href="#i-info"/></svg>
+          <div>电视和这台电脑必须连在 <b>同一个路由器</b> 下。电视插网线、电脑用 Wi-Fi 也可以，只要在同一局域网。</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <header class="card-head">
+          <div class="icon-badge violet"><svg><use href="#i-scan"/></svg></div>
+          <div><h2>连接电视</h2><p>扫描局域网，或手动输入电视 IP</p></div>
+        </header>
+
+        <button class="btn primary block" id="scanBtn">
+          <svg><use href="#i-scan"/></svg><span>扫描局域网中的电视</span>
+        </button>
+        <p class="hint" id="scanHint">扫描约需 2–5 秒，只查找 5555 端口</p>
+        <div class="scan-list" id="scanResults"></div>
+
+        <div class="divider"><span>或手动连接</span></div>
+
+        <div class="input-row">
+          <input id="hostInput" type="text" inputmode="decimal" placeholder="192.168.1.68" autocomplete="off" spellcheck="false">
+          <button class="btn" id="connectBtn"><svg><use href="#i-chevron"/></svg>连接</button>
+        </div>
+        <p class="hint" id="connectHint">如果扫描不到，多半是「网络调试」没开，或路由器开启了 AP 隔离。</p>
+        <p class="hint" id="adbHint">首次连接会自动下载 adb 组件（约 15 MB，仅一次），请保持网络畅通。</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 步骤 2 -->
+  <section class="panel" data-step="2">
+    <article class="card wide">
+      <header class="card-head">
+        <div class="icon-badge green"><svg><use href="#i-download"/></svg></div>
+        <div><h2>选择接收端并安装</h2><p>接收端负责把 AirPlay 画面解码到电视上，装一次即可</p></div>
+      </header>
+      <div class="apk-list" id="apkList"></div>
+      <div class="actions">
+        <button class="btn primary" id="installBtn"><svg><use href="#i-download"/></svg><span>安装到电视</span></button>
+        <span class="status-text" id="installStatus">等待选择安装包</span>
+      </div>
+      <div class="note">
+        <svg><use href="#i-info"/></svg>
+        <div>安装约 10–60 秒。如果电视弹出「允许安装未知来源的应用」，请用遥控器选择 <b>允许</b>。</div>
+      </div>
+    </article>
+  </section>
+
+  <!-- 步骤 3 -->
+  <section class="panel" data-step="3">
+    <article class="card wide">
+      <header class="card-head">
+        <div class="icon-badge amber"><svg><use href="#i-play"/></svg></div>
+        <div><h2>启动接收服务</h2><p>启动后电视会保持接收状态，iPhone 的「屏幕镜像」里就能看到它</p></div>
+      </header>
+
+      <div class="field">
+        <label for="nameInput">接收端名称（在苹果设备上显示的名字）</label>
+        <div class="input-row">
+          <input id="nameInput" type="text" maxlength="24" placeholder="客厅电视" autocomplete="off">
+          <button class="btn" id="saveNameBtn">保存</button>
+        </div>
+        <p class="hint" id="nameHint">精简版名称固定为 AirPlay-Receiver；全功能版可自定义。</p>
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" id="launchBtn"><svg><use href="#i-play"/></svg><span>启动接收端</span></button>
+        <span class="status-text" id="launchStatus">尚未启动</span>
+      </div>
+
+      <div class="check-block">
+        <button class="btn" id="checkBtn" disabled><svg><use href="#i-shield"/></svg><span>检测接收端</span></button>
+        <p class="hint">自检会确认服务进程、网络端口和 AirPlay 接口是否正常，不需要 iPhone。</p>
+        <div class="check-result" id="checkResult"></div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat"><span class="k">接收端</span><b class="v" id="statApk">—</b></div>
+        <div class="stat"><span class="k">投屏名称</span><b class="v" id="statName">—</b></div>
+        <div class="stat"><span class="k">运行状态</span><b class="v" id="statRun">未启动</b></div>
+      </div>
+
+      <ul class="checklist">
+        <li><svg><use href="#i-check"/></svg>接收端是前台服务，电视待机后仍可投屏</li>
+        <li><svg><use href="#i-check"/></svg>精简版支持开机自启，无需每次手动打开</li>
+        <li><svg><use href="#i-check"/></svg>已自动关闭电池优化，避免被系统清理</li>
+      </ul>
+    </article>
+  </section>
+
+  <!-- 步骤 4 -->
+  <section class="panel" data-step="4">
+    <article class="card wide">
+      <header class="card-head">
+        <div class="icon-badge pink"><svg><use href="#i-sparkle"/></svg></div>
+        <div><h2>开始投屏</h2><p>选择你手里的设备，按步骤操作</p></div>
+      </header>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="ios" role="tab"><svg><use href="#i-phone"/></svg>iPhone / iPad</button>
+        <button class="tab" data-tab="mac" role="tab"><svg><use href="#i-mac"/></svg>Mac</button>
+        <button class="tab" data-tab="android" role="tab"><svg><use href="#i-android"/></svg>安卓手机</button>
+      </div>
+
+      <div class="tab-body active" data-tab="ios">
+        <ol class="steps-list compact">
+          <li><span class="idx">1</span><div>确认 iPhone / iPad 与电视连同一个 Wi-Fi</div></li>
+          <li><span class="idx">2</span><div>从屏幕 <b>右上角下滑</b> 打开控制中心</div></li>
+          <li><span class="idx">3</span><div>点击 <b>屏幕镜像</b> 图标（两个方框相叠）</div></li>
+          <li><span class="idx">4</span><div>在列表中选择电视上的接收端名称，等待 2–5 秒</div></li>
+        </ol>
+        <div class="note"><svg><use href="#i-info"/></svg><div>镜像时手机声音会同步到电视。结束投屏请点控制中心里的「停止镜像」。</div></div>
+      </div>
+
+      <div class="tab-body" data-tab="mac">
+        <ol class="steps-list compact">
+          <li><span class="idx">1</span><div>确认 Mac 与电视在同一网络，暂时关闭 VPN / 代理工具</div></li>
+          <li><span class="idx">2</span><div>点菜单栏右上角 <b>控制中心</b> → <b>屏幕镜像</b></div></li>
+          <li><span class="idx">3</span><div>选择电视上的接收端名称即可</div></li>
+        </ol>
+        <div class="note"><svg><use href="#i-info"/></svg><div>macOS 10.14–10.15 请点菜单栏的 AirPlay 图标；镜像时 Mac 可作为「第二块屏」使用。</div></div>
+      </div>
+
+      <div class="tab-body" data-tab="android">
+        <ol class="steps-list compact">
+          <li><span class="idx">1</span><div>索尼电视自带 Chromecast，安卓手机 <b>不需要</b> 安装本套件的接收端</div></li>
+          <li><span class="idx">2</span><div>下拉通知栏，点 <b>投射 / Cast Screen</b>，选择电视</div></li>
+          <li><span class="idx">3</span><div>没有「投射」入口时，安装 Google Home，在设备页点 <b>投屏</b></div></li>
+        </ol>
+        <div class="note"><svg><use href="#i-info"/></svg><div>部分索尼机型还支持 Miracast「屏幕镜像」，可在 设置 → 网络 中打开。</div></div>
+      </div>
+    </article>
+  </section>
+</main>
+
+<footer class="foot">
+  <button class="link-btn" id="helpBtn"><svg><use href="#i-info"/></svg>常见问题与排查</button>
+  <span class="sep">·</span>
+  <a class="link-btn" href="/guide" target="_blank">完整使用说明</a>
+  <span class="sep">·</span>
+  <button class="link-btn" id="logToggle"><svg><use href="#i-terminal"/></svg>运行日志</button>
+  <span class="grow"></span>
+  <span class="muted">接收端基于 UxPlay（GPL-3.0）· 本工具仅在本机运行，不上传数据</span>
+</footer>
+
+<aside class="log-drawer" id="logDrawer">
+  <header>
+    <div><svg><use href="#i-terminal"/></svg>运行日志</div>
+    <button class="icon-btn" id="logClose"><svg><use href="#i-x"/></svg></button>
+  </header>
+  <div class="log-list" id="logList"></div>
+</aside>
+
+<div class="modal" id="helpModal" hidden>
+  <div class="modal-box">
+    <header>
+      <h3>常见问题</h3>
+      <button class="icon-btn" id="helpClose"><svg><use href="#i-x"/></svg></button>
+    </header>
+    <div class="modal-body">
+      <details open><summary>iPhone 的「屏幕镜像」里找不到接收端</summary>
+        <p>① 手机和电视必须在同一个 Wi-Fi（不要用访客网络）；② 进入路由器设置关闭「AP 隔离 / 无线隔离」；③ 电视上把接收端重新启动一次；④ 把 iPhone 的 Wi-Fi 关掉再打开。</p></details>
+      <details><summary>连接成功但电视黑屏 / 一直转圈</summary>
+        <p>① 关闭电视的「节能模式、环境光感应」；② 换用 5GHz Wi-Fi；③ 重启电视上的接收端；④ 老旧机型建议改用「精简版」，硬解更稳。</p></details>
+      <details><summary>画面卡顿、掉帧</summary>
+        <p>AirPlay 镜像默认 30fps。建议电视插网线、电脑/手机连 5GHz，并关闭电脑上的 VPN、代理、录屏软件。</p></details>
+      <details><summary>装不上，提示 INSTALL_FAILED_INSUFFICIENT_STORAGE</summary>
+        <p>电视存储空间不足。到 设置 → 存储 清理缓存或卸载不用的应用后重试。</p></details>
+      <details><summary>Apple TV App 等版权内容黑屏</summary>
+        <p>DRM 加密内容（Apple TV、部分流媒体）无法被开源接收端解密，这是正常现象，不在支持范围。</p></details>
+      <details><summary>每次开机都要手动打开接收端？</summary>
+        <p>精简版自带开机自启。若仍被系统清理，请在安装向导重新执行一次「启动接收端」，它会自动加入电池优化白名单。</p></details>
+      <details><summary>端口 5555 连不上</summary>
+        <p>部分新机型使用「无线调试」配对模式：在开发者选项里打开「无线调试」，用显示的 IP:端口 + 6 位配对码，在向导第 1 步的配对入口输入。</p></details>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

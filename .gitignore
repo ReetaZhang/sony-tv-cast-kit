@@ -1,0 +1,14 @@
+# 构建产物
+dist/
+
+# 运行时分发用（体积大，由 fetch_apks.py 下载）
+apk/*.apk
+tools/
+
+# Python
+__pycache__/
+*.pyc
+
+# 系统
+.DS_Store
+Thumbs.db

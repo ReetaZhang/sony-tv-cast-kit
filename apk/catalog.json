@@ -1,0 +1,52 @@
+[
+  {
+    "id": "lite",
+    "file": "AirPlay接收-精简版.apk",
+    "title": "AirPlay 接收 · 精简版",
+    "subtitle": "索尼 BRAVIA 实机验证 · 仅 3.2 MB",
+    "package": "com.codelphi.airplay",
+    "version": "1.2.1",
+    "minSdk": 24,
+    "abi": "armeabi-v7a",
+    "launch": "com.codelphi.airplay/.MirrorActivity",
+    "rename": false,
+    "verified": true,
+    "tags": [
+      "索尼实机验证",
+      "开机自启",
+      "硬解镜像",
+      "声音同步"
+    ],
+    "desc": "只做屏幕镜像 + 声音，体积小、启动快，兼容只加载主 dex 的老款电视。默认名称固定为 AirPlay-Receiver。",
+    "minSdkLabel": "Android 7.0+",
+    "abis": [
+      "armeabi-v7a"
+    ]
+  },
+  {
+    "id": "full",
+    "file": "AirPlay接收-全功能版.apk",
+    "title": "AirPlay Server · 全功能版",
+    "subtitle": "支持视频 / 音乐投放 · 可自定义名称",
+    "package": "io.github.jqssun.airplay",
+    "version": "0.0.36",
+    "minSdk": 23,
+    "abi": "arm64-v8a / armeabi-v7a",
+    "launch": "io.github.jqssun.airplay/.MainActivity",
+    "rename": true,
+    "verified": false,
+    "tags": [
+      "自定义名称",
+      "视频/HLS",
+      "画中画",
+      "遥控器操作"
+    ],
+    "desc": "在镜像之外还能播放 iPhone/Mac 推送的视频和音乐，支持改名、PIN 码、调试信息，功能最全。",
+    "minSdkLabel": "Android 6.0+",
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86_64"
+    ]
+  }
+]

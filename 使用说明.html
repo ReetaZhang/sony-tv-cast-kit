@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>使用说明 · 索尼电视投屏套件</title>
+<style>
+  :root {
+    --bg: #070a12; --panel: rgba(255,255,255,.045); --line: rgba(255,255,255,.09);
+    --text: #e9eefb; --muted: #93a0b8; --accent: #5b8cff; --accent2: #a855f7;
+    --ok: #3ddc97; --warn: #f6c453; --err: #ff6b6b; --radius: 18px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.8 -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+          "Microsoft YaHei", "Noto Sans SC", "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .glow { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .glow i { position: absolute; display: block; border-radius: 50%; filter: blur(120px); opacity: .3; }
+  .glow i:nth-child(1) { width: 560px; height: 560px; left: -180px; top: -240px;
+    background: radial-gradient(circle, #2b4bff, transparent 65%); }
+  .glow i:nth-child(2) { width: 520px; height: 520px; right: -160px; top: -120px;
+    background: radial-gradient(circle, #8b2bff, transparent 65%); opacity: .24; }
+
+  .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  header .logo {
+    width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center;
+    background: linear-gradient(140deg, #5b8cff, #a855f7);
+    box-shadow: 0 14px 40px -12px rgba(91,140,255,.8);
+  }
+  header .logo svg { width: 26px; height: 26px; stroke: #fff; fill: none; stroke-width: 1.8;
+    stroke-linecap: round; stroke-linejoin: round; }
+  header h1 { font-size: 30px; line-height: 1.25; margin: 20px 0 10px; letter-spacing: -.01em; }
+  header p.lede { color: var(--muted); margin: 0 0 18px; font-size: 15.5px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-size: 12.5px; color: #b8c4da; border: 1px solid var(--line);
+    background: rgba(255,255,255,.04); padding: 5px 12px; border-radius: 999px; }
+  .chip.green { color: #9ff0cd; border-color: rgba(61,220,151,.3); background: rgba(61,220,151,.08); }
+
+  nav.toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 30px 0 10px; }
+  nav.toc a { font-size: 13px; color: var(--muted); text-decoration: none; padding: 6px 13px;
+    border: 1px solid var(--line); border-radius: 999px; transition: .15s; }
+  nav.toc a:hover { color: #fff; border-color: rgba(120,150,255,.5); background: rgba(91,140,255,.1); }
+
+  section { margin-top: 46px; }
+  h2 { font-size: 20px; margin: 0 0 4px; display: flex; align-items: center; gap: 10px; }
+  h2 .n { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center;
+    font-size: 13px; color: #a9c0ff; background: rgba(91,140,255,.14);
+    border: 1px solid rgba(91,140,255,.28); }
+  section > p.sub { color: var(--muted); margin: 0 0 18px; font-size: 13.5px; }
+
+  .card { border: 1px solid rgba(255,255,255,.07); border-radius: var(--radius);
+    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    padding: 22px 24px; margin: 14px 0; }
+
+  .cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .mini { border: 1px solid rgba(255,255,255,.07); border-radius: 14px; padding: 16px 16px 14px;
+    background: rgba(255,255,255,.03); }
+  .mini .k { font-size: 11.5px; color: #77829a; letter-spacing: .08em; }
+  .mini .t { font-size: 14.5px; font-weight: 600; margin: 4px 0 6px; }
+  .mini .d { font-size: 12.5px; color: var(--muted); line-height: 1.65; }
+
+  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 10px 0 0; }
+  ol.steps > li { counter-increment: s; position: relative; padding: 8px 0 8px 40px; font-size: 14px; }
+  ol.steps > li::before { content: counter(s); position: absolute; left: 0; top: 8px;
+    width: 24px; height: 24px; border-radius: 8px; display: grid; place-items: center;
+    font-size: 12px; font-weight: 700; color: #9fb3ff; background: rgba(91,140,255,.12);
+    border: 1px solid rgba(91,140,255,.25); }
+  ol.steps b { color: #fff; }
+
+  kbd { display: inline-block; padding: 1px 7px; border-radius: 6px; font-size: 12.5px;
+    background: rgba(255,255,255,.08); border: 1px solid var(--line); }
+  code { padding: 2px 7px; border-radius: 6px; background: rgba(255,255,255,.07);
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; color: #bfe3ff; }
+
+  .note { display: flex; gap: 10px; margin: 14px 0 0; padding: 12px 14px; border-radius: 12px;
+    background: rgba(91,140,255,.08); border: 1px solid rgba(91,140,255,.2);
+    font-size: 13px; color: #b8c4da; }
+  .note.warn { background: rgba(246,196,83,.07); border-color: rgba(246,196,83,.22); color: #e8d3a0; }
+  .note .i { flex: none; font-weight: 700; }
+  .note b { color: #fff; }
+
+  .method { border: 1px solid rgba(255,255,255,.07); border-radius: 14px; padding: 18px 20px;
+    margin: 12px 0; background: rgba(255,255,255,.025); }
+  .method h3 { margin: 0 0 2px; font-size: 15.5px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 500; }
+  .badge.best { color: #062018; background: var(--ok); }
+  .badge.alt { color: #a9c0ff; background: rgba(91,140,255,.15); border: 1px solid rgba(91,140,255,.3); }
+  .method p { margin: 6px 0 0; font-size: 13.5px; color: #b3bfd4; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .device { border: 1px solid rgba(255,255,255,.07); border-radius: 14px; padding: 18px 20px;
+    background: rgba(255,255,255,.025); }
+  .device h3 { margin: 0 0 8px; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+  .device h3 svg { width: 18px; height: 18px; stroke: #9fb3ff; fill: none; stroke-width: 1.7;
+    stroke-linecap: round; stroke-linejoin: round; }
+
+  details { border-bottom: 1px solid rgba(255,255,255,.07); padding: 14px 0; }
+  details:last-of-type { border-bottom: 0; }
+  summary { cursor: pointer; font-size: 14.5px; color: #dde5f5; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "＋"; color: #6f7d99; margin-right: 10px; font-size: 12px; }
+  details[open] summary::before { content: "－"; }
+  details p, details ul { margin: 8px 0 0 20px; font-size: 13.5px; color: #9da9bf; }
+  details ul { padding-left: 18px; }
+  details li { margin: 3px 0; }
+
+  .kbd-line { font-size: 12.5px; color: #77829a; }
+
+  footer { margin-top: 56px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.07);
+    color: #6c768c; font-size: 12.5px; }
+  footer a { color: #8fa8d8; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 760px) {
+    .cards3, .split { grid-template-columns: 1fr; }
+    .wrap { padding: 32px 18px 60px; }
+    header h1 { font-size: 24px; }
+  }
+
+  @media print {
+    body { background: #fff; color: #111; }
+    .glow, nav.toc { display: none; }
+    .card, .method, .device, .mini { background: #fff; border-color: #ddd; }
+    header p.lede, .mini .d, details p, details ul { color: #444; }
+    h1, h2, summary, .mini .t, .device h3 { color: #111; }
+    footer { color: #666; }
+    section { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="glow" aria-hidden="true"><i></i><i></i></div>
+
+<div class="wrap">
+
+  <header>
+    <div class="logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2.5"/><path d="M8 21h8M12 17v4"/></svg>
+    </div>
+    <h1>索尼电视投屏套件 · 使用说明</h1>
+    <p class="lede">在索尼 Android TV 上装好接收端，iPhone、iPad、Mac 就能直接「屏幕镜像」到电视；安卓手机用电视自带的 Chromecast 投屏，无需额外安装。</p>
+    <div class="meta">
+      <span class="chip green">适用：Sony BRAVIA / Android TV 7.0+</span>
+      <span class="chip">iPhone / iPad：iOS 12+</span>
+      <span class="chip">Mac：macOS 10.14+</span>
+      <span class="chip">安卓：电视自带 Chromecast</span>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <a href="#quick">快速开始</a>
+    <a href="#install">安装到电视</a>
+    <a href="#cast">怎么投屏</a>
+    <a href="#faq">常见问题</a>
+    <a href="#advanced">进阶设置</a>
+    <a href="#about">关于与版权</a>
+  </nav>
+
+  <!-- 快速开始 -->
+  <section id="quick">
+    <h2><span class="n">1</span>快速开始</h2>
+    <p class="sub">整套流程只有三步，装一次就够。</p>
+    <div class="cards3">
+      <div class="mini">
+        <div class="k">STEP 01</div>
+        <div class="t">把接收端装到电视</div>
+        <div class="d">用电脑上的「安装向导」一键完成，或把 APK 拷到 U 盘在电视上安装。</div>
+      </div>
+      <div class="mini">
+        <div class="k">STEP 02</div>
+        <div class="t">启动接收服务</div>
+        <div class="d">打开电视上的「AirPlay 接收」，状态显示运行中即可，之后开机自动启动。</div>
+      </div>
+      <div class="mini">
+        <div class="k">STEP 03</div>
+        <div class="t">在手机 / Mac 上镜像</div>
+        <div class="d">控制中心 → 屏幕镜像 → 选择电视名称，2–5 秒后电视出现画面。</div>
+      </div>
+    </div>
+    <div class="note">
+      <span class="i">i</span>
+      <div>电视和手机 / 电脑必须连在<b>同一个路由器</b>下。电视插网线、手机用 Wi-Fi 也可以，只要在同一局域网。</div>
+    </div>
+  </section>
+
+  <!-- 安装 -->
+  <section id="install">
+    <h2><span class="n">2</span>安装到电视</h2>
+    <p class="sub">三种方式任选其一。有电脑的话，推荐方式一，最省事。</p>
+
+    <div class="method">
+      <h3>方式一 · 电脑安装向导 <span class="badge best">推荐</span></h3>
+      <p>套件里带了一个本地小工具，能自动找到电视、安装 APK、启动服务，并帮你把接收端名称改好。全程在浏览器里点几下。</p>
+      <ol class="steps">
+        <li>双击运行 <b>开始使用（macOS）.command</b>（Windows 用 <b>Windows-启动.bat</b>），浏览器会自动打开安装向导。若 macOS 提示「无法打开」，右键该文件选 <b>打开</b> 即可。</li>
+        <li>在电视上用遥控器开启「网络调试」：<b>设置 → 系统 → 关于 → 版本</b>，对着「版本」连按 7 次确定键；返回 <b>系统 → 开发者选项</b>，打开 <b>网络调试</b>。</li>
+        <li>在向导第 1 步点「扫描局域网中的电视」，或直接输入电视 IP，点连接。电视会弹出「允许调试」，用遥控器选<b>允许</b>。</li>
+        <li>第 2 步选择「精简版」并安装；第 3 步点「启动接收端」，完成。</li>
+      </ol>
+      <div class="note warn">
+        <span class="i">!</span>
+        <div>首次连接时向导会自动下载 adb 组件（约 15 MB，仅一次）。如果电视型号较新、没有「网络调试」而是「无线调试」，请用该页显示的 IP、端口和 6 位配对码在向导里配对。</div>
+      </div>
+    </div>
+
+    <div class="method">
+      <h3>方式二 · 电视上直接安装 <span class="badge alt">不用电脑</span></h3>
+      <p>电视能上网时，用遥控器在电视上操作即可（国际版机型带 Google Play 时最方便）。</p>
+      <ol class="steps">
+        <li>在电视的 <b>Google Play</b> 里搜索 <b>AirPlay Server</b>（包名 <code>io.github.jqssun.airplay</code>），直接安装——这就是套件里的「全功能版」。</li>
+        <li>如果电视没有 Play 商店，安装一个应用市场（如当贝市场、沙发管家），或使用方式三。</li>
+      </ol>
+    </div>
+
+    <div class="method">
+      <h3>方式三 · U 盘安装</h3>
+      <p>适合电视没有 Play 商店、也不想开调试的情况。</p>
+      <ol class="steps">
+        <li>把 <code>apk/AirPlay接收-精简版.apk</code> 拷到 U 盘根目录（建议 FAT32 格式）。</li>
+        <li>U 盘插到电视上，打开电视的<b>文件管理 / 媒体播放器</b>，找到 APK 并确认安装。</li>
+        <li>若提示「禁止安装未知来源应用」，到 <b>设置 → 应用 → 安全与限制</b> 里允许文件管理器安装应用。</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <b style="font-size:15px">两个版本怎么选？</b>
+      <p style="margin:8px 0 0; font-size:13.5px; color:#a9b4c9">
+        <b style="color:#fff">精简版（3.2 MB，推荐）</b>：只做屏幕镜像 + 声音，体积小、启动快，已在索尼 BRAVIA 实机验证，默认名称 <code>AirPlay-Receiver</code>。<br>
+        <b style="color:#fff">全功能版（26 MB）</b>：额外支持 AirPlay 视频、音乐投放、画中画、PIN 码，并且可以自定义接收端名称，需要 Android 6.0+。
+      </p>
+      <p style="margin:10px 0 0; font-size:13px; color:#8d99b0">
+        精简版只带 32 位（armeabi-v7a）库，绝大多数索尼电视都能装；少数只支持 64 位应用的新机型会提示「不兼容此电视」，这时改装全功能版即可（它同时带 64 位和 32 位）。安装向导会自动识别并提示。
+      </p>
+    </div>
+  </section>
+
+  <!-- 投屏 -->
+  <section id="cast">
+    <h2><span class="n">3</span>怎么投屏</h2>
+    <p class="sub">接收端启动后，苹果设备会在「屏幕镜像」列表里看到它。</p>
+
+    <div class="split">
+      <div class="device">
+        <h3><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10.5 18.5h3"/></svg>iPhone / iPad</h3>
+        <ol class="steps">
+          <li>确认与电视连同一个 Wi-Fi。</li>
+          <li>从屏幕<b>右上角下滑</b>打开控制中心。</li>
+          <li>点 <b>屏幕镜像</b>（两个方框相叠的图标）。</li>
+          <li>选择 <b>AirPlay-Receiver</b>（或你自定义的名称）。</li>
+        </ol>
+      </div>
+      <div class="device">
+        <h3><svg viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="12.5" rx="2"/><path d="M9.5 20h5M12 16.5V20"/></svg>Mac</h3>
+        <ol class="steps">
+          <li>确认与电视在同一网络，暂时关闭 VPN / 代理。</li>
+          <li>点菜单栏右上角 <b>控制中心</b> → <b>屏幕镜像</b>。</li>
+          <li>选择电视上的接收端名称。</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="device" style="margin-top:14px">
+      <h3><svg viewBox="0 0 24 24"><path d="M6 9.5h12v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M8 9.5 6.2 5.2M16 9.5l1.8-4.3"/><path d="M10 14v2.5M14 14v2.5"/></svg>安卓手机</h3>
+      <ol class="steps">
+        <li>索尼电视自带 Chromecast，<b>不需要</b>安装本套件的接收端。</li>
+        <li>下拉通知栏，点 <b>投射 / Cast Screen</b>，选择电视；没有入口就装 Google Home，在设备页点「投屏」。</li>
+        <li>部分机型还支持 Miracast「屏幕镜像」，在 <b>设置 → 网络</b> 中打开。</li>
+      </ol>
+    </div>
+
+    <div class="note">
+      <span class="i">i</span>
+      <div>镜像时手机 / 电脑的声音会同步到电视。结束投屏：iPhone 点控制中心的「停止镜像」，Mac 再点一次「屏幕镜像」取消勾选。</div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <h2><span class="n">4</span>常见问题</h2>
+    <p class="sub">按出现频率排序，遇到问题先看这里。</p>
+
+    <details open>
+      <summary>iPhone 的「屏幕镜像」里找不到电视</summary>
+      <p>按顺序排查：</p>
+      <ul>
+        <li>手机和电视是否在同一个 Wi-Fi？访客网络、热点不算。</li>
+        <li>路由器是否开启了「AP 隔离 / 无线隔离」？开启后设备之间互相不可见，需要关闭。</li>
+        <li>电视上的接收端是否在运行？重新打开一次「AirPlay 接收」。</li>
+        <li>把 iPhone 的 Wi-Fi 关掉再打开，重新下拉控制中心。</li>
+        <li>路由器如果开了「IPv6 隔离」或双频合一，尝试让手机连 5GHz、电视插网线。</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>连接成功，但电视黑屏 / 一直转圈</summary>
+      <ul>
+        <li>关闭电视的<b>节能模式、环境光感应、自动亮度</b>。</li>
+        <li>换 5GHz Wi-Fi，或给电视插网线。</li>
+        <li>电视上把接收端彻底关闭再启动。</li>
+        <li>老款机型建议用「精简版」，硬解更稳。</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>画面卡顿、掉帧、有杂音</summary>
+      <ul>
+        <li>AirPlay 镜像默认 30fps，这是协议限制，不是电视性能问题。</li>
+        <li>电视插网线，手机 / 电脑连 5GHz，远离微波炉等干扰源。</li>
+        <li>关闭电脑上的 VPN、代理、录屏和下载任务。</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>没有声音</summary>
+      <ul>
+        <li>用遥控器调大电视音量，确认没有静音。</li>
+        <li>iPhone 侧的音量键也会影响投屏音量。</li>
+        <li>如果电视接了蓝牙音箱 / 回音壁，检查输出通道。</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary>提示「不兼容此电视」/ INSTALL_FAILED_NO_MATCHING_ABIS</summary>
+      <p>这台电视只支持 64 位应用，装不了精简版（只有 32 位库）。改选 <b>全功能版</b> 即可，它同时包含 64 位和 32 位。</p>
+    </details>
+
+    <details>
+      <summary>安装失败，提示 INSTALL_FAILED_INSUFFICIENT_STORAGE</summary>
+      <p>电视存储空间不足。到 <b>设置 → 存储</b> 清理缓存、卸载不用的应用后重试。</p>
+    </details>
+
+    <details>
+      <summary>Apple TV App 等版权内容黑屏</summary>
+      <p>DRM 加密内容（Apple TV、部分流媒体）无法被开源接收端解密，这是正常现象，不在支持范围内。</p>
+    </details>
+
+    <details>
+      <summary>怎么确认接收端真的在运行？</summary>
+      <p>在安装向导第 3 步点 <b>「检测接收端」</b>，它会依次检查：服务进程是否在跑、网络端口是否在监听、AirPlay 的 <code>/server-info</code> 接口是否返回数据。三项都通过，说明电视已经在等苹果设备连接了。</p>
+    </details>
+
+    <details>
+      <summary>每次开机都要手动打开接收端？</summary>
+      <p>精简版自带开机自启。如果仍被系统清理，在安装向导里重新执行一次「启动接收端」，它会自动把应用加入电池优化白名单。</p>
+    </details>
+
+    <details>
+      <summary>连接电视时提示 5555 端口超时</summary>
+      <ul>
+        <li>确认电视「网络调试」已打开，且 IP 没有变（建议在路由器里给电视绑定固定 IP）。</li>
+        <li>电脑和电视不在同一网段时连不上，检查是否连了 VPN 或加速器。</li>
+        <li>Android 11 以上的机型可能使用「无线调试 + 配对码」，请在向导里用配对入口。</li>
+      </ul>
+    </details>
+  </section>
+
+  <!-- 进阶 -->
+  <section id="advanced">
+    <h2><span class="n">5</span>进阶设置</h2>
+    <p class="sub">一般用不到，需要时再看。</p>
+    <div class="card">
+      <p style="margin:0; font-size:13.5px; color:#b3bfd4">
+        <b style="color:#fff">改接收端名称</b>：全功能版支持。在安装向导第 3 步输入名称（如「客厅电视」）并保存，之后苹果设备的投屏列表里就会显示这个名字。精简版名称固定为 <code>AirPlay-Receiver</code>。<br><br>
+        <b style="color:#fff">设置 PIN 码</b>：全功能版的设置页里可以开启访问 PIN，防止别人误投。<br><br>
+        <b style="color:#fff">自检</b>：第 3 步的「检测接收端」会检查进程、端口和 AirPlay 接口，不用 iPhone 也能确认服务是否正常。<br><br>
+        <b style="color:#fff">更新</b>：下载新版 APK，用安装向导重新安装即可覆盖，设置会保留。<br><br>
+        <b style="color:#fff">卸载</b>：电视 <b>设置 → 应用 → 查看全部应用</b>，选择「AirPlay 接收」或「AirPlay Server」，点卸载。
+      </p>
+    </div>
+  </section>
+
+  <!-- 关于 -->
+  <section id="about">
+    <h2><span class="n">6</span>关于与版权</h2>
+    <p class="sub">本套件是一个「组装 + 安装工具」，不修改接收端本身。</p>
+    <div class="card" style="font-size:13.5px; color:#a9b4c9">
+      <p style="margin:0 0 10px">
+        接收端基于开源项目 <b style="color:#fff">UxPlay</b>（GPL-3.0）实现 AirPlay / RAOP 协议栈：
+      </p>
+      <ul style="margin:0 0 12px 20px; padding:0">
+        <li>精简版：<a href="https://github.com/gzhanlei/uxplay-android" target="_blank" rel="noopener">gzhanlei/uxplay-android</a>（已在索尼 BRAVIA 实机验证）</li>
+        <li>全功能版：<a href="https://github.com/jqssun/android-airplay-server" target="_blank" rel="noopener">jqssun/android-airplay-server</a></li>
+        <li>协议栈：<a href="https://github.com/FDH2/UxPlay" target="_blank" rel="noopener">FDH2/UxPlay</a></li>
+      </ul>
+      <p style="margin:0">
+        安装向导、说明文档与打包脚本为本套件原创，遵循 GPL-3.0 分发。各 APK 的版权归其作者所有，按 GPL-3.0 原样分发，源码见上方链接。<br>
+        本套件与 Apple、Sony 无任何关联；「AirPlay」「BRAVIA」等商标归各自所有者。
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    索尼电视投屏套件 v1.0 · 安装向导仅在本机运行，不联网、不上传任何数据。<br>
+    遇到本文没覆盖的问题，先打开安装向导里的「运行日志」，那里能看到具体失败原因。
+  </footer>
+
+</div>
+</body>
+</html>
